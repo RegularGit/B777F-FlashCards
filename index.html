@@ -7,6 +7,40 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>B777F Oral Questions Flashcards</title>
     <style>
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --card-bg: white;
+            --text-primary: #333;
+            --text-secondary: #888;
+            --text-light: white;
+            --controls-bg: white;
+            --answer-bg: #f8f9fa;
+            --answer-border: #e0e0e0;
+            --answer-correct-bg: #d4edda;
+            --answer-correct-border: #28a745;
+            --section-color: #667eea;
+            --progress-gradient-start: #667eea;
+            --progress-gradient-end: #764ba2;
+        }
+        
+        body.dark-mode {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: #2d3748;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-light: white;
+            --controls-bg: #2d3748;
+            --answer-bg: #1a202c;
+            --answer-border: #4a5568;
+            --answer-correct-bg: #22543d;
+            --answer-correct-border: #48bb78;
+            --section-color: #90cdf4;
+            --progress-gradient-start: #4299e1;
+            --progress-gradient-end: #667eea;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -16,19 +50,25 @@
         html {
             overflow-x: hidden;
             width: 100%;
+            position: fixed;
+            height: 100%;
         }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
+            height: 100%;
             padding: 10px;
-            color: #333;
+            color: var(--text-primary);
             margin: 0;
             overflow-x: hidden;
+            overflow-y: auto;
             width: 100%;
             max-width: 100vw;
             box-sizing: border-box;
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-overflow-scrolling: touch;
         }
         
         .container {
@@ -42,7 +82,7 @@
         
         .header {
             text-align: center;
-            color: white;
+            color: var(--text-light);
             margin-bottom: 30px;
         }
         
@@ -52,13 +92,18 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         
+        .header p {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
         .controls {
-            background: white;
+            background: var(--controls-bg);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             margin-bottom: 20px;
             position: relative;
+            transition: background 0.3s ease;
         }
         
         .controls-toggle {
@@ -77,7 +122,7 @@
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #555;
+            color: var(--text-primary);
         }
         
         .button-group {
@@ -105,8 +150,35 @@
         
         .btn-primary:hover {
             background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:active {
+            background: #4a5bc4;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+            
+            .btn-priority:hover {
+                transform: translateY(-2px);
+            }
+            
+            .btn-marked:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
+            }
+            
+            .btn-secondary:hover {
+                transform: translateY(-1px);
+            }
+            
+            .flashcard:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            }
         }
         
         .btn-priority {
@@ -115,9 +187,9 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         
-        .btn-priority:hover {
-            background: linear-gradient(135deg, #ffed4e 0%, #5ec73e 100%);
-            transform: translateY(-2px);
+        .btn-marked {
+            background: #ffa500;
+            color: white;
         }
         
         .btn-secondary {
@@ -125,7 +197,7 @@
             color: #333;
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:active {
             background: #d0d0d0;
         }
         
@@ -172,19 +244,14 @@
         }
         
         .flashcard {
-            background: white;
+            background: var(--card-bg);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             min-height: 400px;
             padding: 40px;
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .flashcard:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            transition: background 0.3s ease;
         }
         
         .card-side {
@@ -220,21 +287,21 @@
         }
         
         .card-section {
-            color: #667eea;
+            color: var(--section-color);
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 5px;
         }
         
         .card-id {
-            color: #888;
+            color: var(--text-secondary);
             font-size: 12px;
         }
         
         .question-text {
             font-size: 20px;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 30px;
         }
         
@@ -245,22 +312,66 @@
         .answer-item {
             padding: 12px 15px;
             margin-bottom: 10px;
-            background: #f8f9fa;
+            background: var(--answer-bg);
             border-radius: 8px;
-            border-left: 4px solid #e0e0e0;
+            border-left: 4px solid var(--answer-border);
+            transition: background 0.3s ease;
         }
         
         .answer-item.correct {
-            background: #d4edda;
-            border-left-color: #28a745;
+            background: var(--answer-correct-bg);
+            border-left-color: var(--answer-correct-border);
             font-weight: 600;
         }
         
         .card-instruction {
             text-align: center;
-            color: #888;
+            color: var(--text-secondary);
             font-size: 14px;
             margin-top: 20px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .card-action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-mark {
+            background: #ffa500;
+            color: white;
+        }
+        
+        .btn-mark.marked {
+            background: #ff6b00;
+        }
+        
+        .btn-report {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-report.reported {
+            background: #bd2130;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .card-action-btn:hover {
+                transform: translateY(-1px);
+                opacity: 0.9;
+            }
         }
         
         .navigation {
@@ -287,7 +398,7 @@
         }
         
         .progress-fill {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, var(--progress-gradient-start) 0%, var(--progress-gradient-end) 100%);
             height: 100%;
             transition: width 0.3s;
         }
@@ -492,7 +603,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✈️ B777F Oral Questions</h1>
+            <h1>🛫 B777F Oral Questions</h1>
             <p>Click card to flip • 754 Questions • 221 Priority</p>
         </div>
         
@@ -503,7 +614,8 @@
                 <label>Question Set:</label>
                 <div class="button-group">
                     <button class="btn btn-primary active" onclick="setMode('all')">All Questions</button>
-                    <button class="btn btn-priority" onclick="setMode('priority')">Priority Only (221)</button>
+                    <button class="btn btn-priority" onclick="setMode('priority')">⭐ Priority Only (221)</button>
+                    <button class="btn btn-marked" onclick="setMode('marked')">⭐ Marked (<span id="markedCount">0</span>)</button>
                 </div>
             </div>
             
@@ -529,6 +641,7 @@
                         <span class="shuffle-icon">🔀</span> Shuffle
                     </button>
                     <button class="btn btn-secondary" onclick="resetProgress()">↺ Reset</button>
+                    <button class="btn btn-secondary" id="darkModeToggle" onclick="toggleDarkMode()">🌙 Night Mode</button>
                 </div>
             </div>
             
@@ -577,9 +690,25 @@
         let currentMode = 'all';
         let currentSection = 'all';
         let answerMode = 'multiple'; // 'multiple' or 'correct'
+        let markedQuestions = new Set(); // Track marked question numbers
+        
+        // Load marked questions from localStorage
+        function loadMarkedQuestions() {
+            const saved = localStorage.getItem('markedQuestions');
+            if (saved) {
+                markedQuestions = new Set(JSON.parse(saved));
+            }
+        }
+        
+        // Save marked questions to localStorage
+        function saveMarkedQuestions() {
+            localStorage.setItem('markedQuestions', JSON.stringify([...markedQuestions]));
+        }
         
         // Initialize
         function init() {
+            loadMarkedQuestions();
+            updateMarkedCount();
             populateSections();
             displayCard();
             updateStats();
@@ -633,9 +762,104 @@
             }
         }
         
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.getElementById('darkModeToggle');
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            if (isDark) {
+                button.textContent = '☀️ Day Mode';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                button.textContent = '🌙 Night Mode';
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+        
+        function toggleMark(questionNumber) {
+            if (markedQuestions.has(questionNumber)) {
+                markedQuestions.delete(questionNumber);
+            } else {
+                markedQuestions.add(questionNumber);
+            }
+            saveMarkedQuestions();
+            updateMarkedCount();
+            displayCard(); // Refresh card to update button state
+        }
+        
+        function updateMarkedCount() {
+            document.getElementById('markedCount').textContent = markedQuestions.size;
+        }
+        
+        function reportError(questionNumber) {
+            const card = allQuestions.find(q => q.number === questionNumber);
+            if (!card) return;
+            
+            // Show confirmation with detailed prompt
+            const userDescription = prompt('Please describe the error:\n\n• What is wrong with this question?\n• If possible, what should the correct answer be?\n• Any other notes or corrections?');
+            
+            if (userDescription === null) {
+                // User clicked cancel
+                return;
+            }
+            
+            // Prepare the report data
+            const reportData = {
+                question_number: card.number,
+                question_id: card.id,
+                section: card.section,
+                question_text: card.question,
+                all_answers: card.answers.join(' | '),
+                correct_answer: card.answers[card.correct_index],
+                user_description: userDescription || '(No description provided)',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Send to Formspree
+            fetch('https://formspree.io/f/xvzqpdqo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reportData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('✅ Error report submitted successfully!\n\nThank you for helping improve the questions.');
+                } else {
+                    alert('⚠️ There was an issue submitting the report. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('⚠️ Could not submit report. Please check your internet connection.');
+            });
+        }
+        
+        // Load dark mode preference on page load
+        function loadDarkModePreference() {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                const button = document.getElementById('darkModeToggle');
+                if (button) {
+                    button.textContent = '☀️ Day Mode';
+                }
+            }
+        }
+        
         function filterQuestions() {
             currentQuestions = allQuestions.filter(q => {
-                const modeMatch = currentMode === 'all' || (currentMode === 'priority' && q.priority);
+                let modeMatch;
+                if (currentMode === 'all') {
+                    modeMatch = true;
+                } else if (currentMode === 'priority') {
+                    modeMatch = q.priority;
+                } else if (currentMode === 'marked') {
+                    modeMatch = markedQuestions.has(q.number);
+                } else {
+                    modeMatch = true;
+                }
+                
                 const sectionMatch = currentSection === 'all' || q.section === currentSection;
                 return modeMatch && sectionMatch;
             });
@@ -705,11 +929,38 @@
                 });
                 backHTML += '</ul>';
             } else {
-                // Correct Answer Only mode: show only the correct answer
-                backHTML += '<ul class="answers-list">';
-                backHTML += `<li class="answer-item correct">${card.answers[card.correct_index]}</li>`;
-                backHTML += '</ul>';
+                // Correct Answer Only mode: check if correct answer references other options
+                const correctAnswer = card.answers[card.correct_index];
+                const referencesMultiple = /all|any|each|both|multiple/i.test(correctAnswer);
+                
+                if (referencesMultiple) {
+                    // Show all answers since the correct answer references them
+                    backHTML += '<ul class="answers-list">';
+                    card.answers.forEach((answer, idx) => {
+                        const isCorrect = idx === card.correct_index;
+                        backHTML += `<li class="answer-item ${isCorrect ? 'correct' : ''}">${answer}</li>`;
+                    });
+                    backHTML += '</ul>';
+                } else {
+                    // Show only the correct answer
+                    backHTML += '<ul class="answers-list">';
+                    backHTML += `<li class="answer-item correct">${correctAnswer}</li>`;
+                    backHTML += '</ul>';
+                }
             }
+            
+            // Add action buttons
+            const isMarked = markedQuestions.has(card.number);
+            backHTML += `
+                <div class="card-actions">
+                    <button class="card-action-btn btn-mark ${isMarked ? 'marked' : ''}" onclick="toggleMark(${card.number})">
+                        ${isMarked ? '⭐ Marked' : '☆ Mark for Review'}
+                    </button>
+                    <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
+                        🚩 Report Error
+                    </button>
+                </div>
+            `;
             
             backHTML += '<div class="card-instruction">Click to flip back</div>';
             document.getElementById('cardBack').innerHTML = backHTML;
@@ -783,6 +1034,9 @@
         
         // Initialize on load
         init();
+        
+        // Load dark mode preference
+        loadDarkModePreference();
         
         // Auto-collapse settings on mobile devices
         if (window.innerWidth <= 600) {
