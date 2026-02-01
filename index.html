@@ -200,6 +200,33 @@
             background: #d0d0d0;
         }
         
+        body.dark-mode .btn-secondary {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+        
+        body.dark-mode .btn-secondary:active {
+            background: #2d3748;
+        }
+        
+        .btn-mode {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid transparent;
+        }
+        
+        body.dark-mode .btn-mode {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+        
+        .btn-mode.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
         .btn.active {
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
         }
@@ -211,7 +238,15 @@
             border-radius: 8px;
             font-size: 14px;
             background: white;
+            color: #333;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode select {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-color: #4a5568;
         }
         
         .stats {
@@ -220,6 +255,10 @@
             margin-top: 15px;
             padding-top: 15px;
             border-top: 2px solid #f0f0f0;
+        }
+        
+        body.dark-mode .stats {
+            border-top-color: #4a5568;
         }
         
         .stat {
@@ -314,13 +353,34 @@
             background: var(--answer-bg);
             border-radius: 8px;
             border-left: 4px solid var(--answer-border);
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .answer-item:hover {
+            background: #e8e8e8;
+            transform: translateX(5px);
+        }
+        
+        body.dark-mode .answer-item:hover {
+            background: #3a4555;
         }
         
         .answer-item.correct {
             background: var(--answer-correct-bg);
             border-left-color: var(--answer-correct-border);
             font-weight: 600;
+        }
+        
+        .answer-item.wrong {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            font-weight: 600;
+        }
+        
+        body.dark-mode .answer-item.wrong {
+            background: #5a1f1f;
+            border-left-color: #e74c3c;
         }
         
         .card-instruction {
@@ -634,6 +694,15 @@
             </div>
             
             <div class="filter-section">
+                <label>Display Mode:</label>
+                <div class="button-group">
+                    <button class="btn btn-mode" id="modeMultiple" onclick="setAnswerMode('multiple')">📝 Multiple Choice</button>
+                    <button class="btn btn-mode" id="modeCorrect" onclick="setAnswerMode('correct')">✓ Correct Only</button>
+                    <button class="btn btn-mode" id="modeFull" onclick="setAnswerMode('full')">📄 Full Display</button>
+                </div>
+            </div>
+            
+            <div class="filter-section">
                 <label>Options:</label>
                 <div class="button-group">
                     <button class="btn btn-secondary" onclick="shuffleCards()">
@@ -688,7 +757,7 @@
         let showingFront = true;
         let currentMode = 'all';
         let currentSection = 'all';
-        let answerMode = 'multiple'; // 'multiple' or 'correct'
+        let answerMode = 'multiple'; // 'multiple', 'correct', or 'full'
         let markedQuestions = new Set(); // Track marked question numbers
         
         // Load marked questions from localStorage
@@ -709,6 +778,14 @@
             loadMarkedQuestions();
             updateMarkedCount();
             populateSections();
+            
+            // Restore saved answer mode or default to multiple
+            const savedMode = localStorage.getItem('answerMode');
+            if (savedMode) {
+                answerMode = savedMode;
+            }
+            setAnswerMode(answerMode);
+            
             displayCard();
             updateStats();
         }
@@ -736,12 +813,23 @@
         
         function setAnswerMode(mode) {
             answerMode = mode;
-            // Update button states for answer display
-            const buttons = document.querySelectorAll('.filter-section')[1].querySelectorAll('.btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            localStorage.setItem('answerMode', mode);
+            
+            // Update button states
+            document.getElementById('modeMultiple').classList.remove('active');
+            document.getElementById('modeCorrect').classList.remove('active');
+            document.getElementById('modeFull').classList.remove('active');
+            
+            if (mode === 'multiple') {
+                document.getElementById('modeMultiple').classList.add('active');
+            } else if (mode === 'correct') {
+                document.getElementById('modeCorrect').classList.add('active');
+            } else if (mode === 'full') {
+                document.getElementById('modeFull').classList.add('active');
+            }
             
             // Redisplay current card with new answer mode
+            showingFront = true;
             displayCard();
         }
         
@@ -876,64 +964,88 @@
             }
             
             const card = currentQuestions[currentIndex];
-            showingFront = true;
+            const isMarked = markedQuestions.has(card.number);
             
-            // Front of card - different based on answer mode
-            let frontHTML = '';
-            if (card.priority) {
-                frontHTML += '<div class="priority-badge">⭐ PRIORITY</div>';
-            }
-            frontHTML += `
-                <div class="card-header">
-                    <div class="card-section">${card.section}</div>
-                    <div class="card-id">${card.id} • Question ${card.number}</div>
-                </div>
-                <div class="question-text">${card.question}</div>
-            `;
-            
-            // In Multiple Choice mode, show all answers on front (not highlighted)
-            if (answerMode === 'multiple') {
-                frontHTML += '<ul class="answers-list">';
-                card.answers.forEach((answer) => {
-                    frontHTML += `<li class="answer-item">${answer}</li>`;
-                });
-                frontHTML += '</ul>';
-                frontHTML += '<div class="card-instruction">Click to see correct answer</div>';
-            } else {
-                // In Correct Answer Only mode, show instruction only
-                frontHTML += '<div class="card-instruction">Click to see answer</div>';
-            }
-            
-            document.getElementById('cardFront').innerHTML = frontHTML;
-            
-            // Back of card - different based on answer mode
-            let backHTML = '';
-            if (card.priority) {
-                backHTML += '<div class="priority-badge">⭐ PRIORITY</div>';
-            }
-            backHTML += `
-                <div class="card-header">
-                    <div class="card-section">${card.section}</div>
-                    <div class="card-id">${card.id} • Question ${card.number}</div>
-                </div>
-                <div class="question-text">${card.question}</div>
-            `;
-            
-            if (answerMode === 'multiple') {
-                // Multiple Choice mode: show all answers with correct one highlighted
-                backHTML += '<ul class="answers-list">';
-                card.answers.forEach((answer, idx) => {
-                    const isCorrect = idx === card.correct_index;
-                    backHTML += `<li class="answer-item ${isCorrect ? 'correct' : ''}">${answer}</li>`;
-                });
-                backHTML += '</ul>';
-            } else {
-                // Correct Answer Only mode: check if correct answer references other options
-                const correctAnswer = card.answers[card.correct_index];
-                const referencesMultiple = /all|any|each|both|multiple/i.test(correctAnswer);
+            if (answerMode === 'full') {
+                // FULL DISPLAY MODE - Show question and answer together, no flipping
+                showingFront = true;
+                let fullHTML = '';
+                if (card.priority) {
+                    fullHTML += '<div class="priority-badge">⭐ PRIORITY</div>';
+                }
+                fullHTML += `
+                    <div class="card-header">
+                        <div class="card-section">${card.section}</div>
+                        <div class="card-id">${card.id} • Question ${card.number}</div>
+                    </div>
+                    <div class="question-text">${card.question}</div>
+                    <div style="margin: 20px 0; padding: 15px; background: var(--answer-correct-bg); border: 2px solid var(--answer-correct-border); border-radius: 8px;">
+                        <div style="font-weight: bold; margin-bottom: 10px; color: var(--answer-correct-border);">✓ Answer:</div>
+                        <div style="font-size: 16px;">${card.answers[card.correct_index]}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-action-btn btn-mark ${isMarked ? 'marked' : ''}" onclick="toggleMark(${card.number})">
+                            ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
+                        </button>
+                        <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
+                            🚩 Report Error
+                        </button>
+                    </div>
+                `;
                 
-                if (referencesMultiple) {
-                    // Show all answers since the correct answer references them
+                document.getElementById('cardFront').innerHTML = fullHTML;
+                document.getElementById('cardBack').innerHTML = '';
+                document.getElementById('cardFront').classList.add('active');
+                document.getElementById('cardBack').classList.remove('active');
+                
+            } else {
+                // MULTIPLE CHOICE or CORRECT ONLY modes - use flip behavior
+                showingFront = true;
+                
+                // Front of card
+                let frontHTML = '';
+                if (card.priority) {
+                    frontHTML += '<div class="priority-badge">⭐ PRIORITY</div>';
+                }
+                frontHTML += `
+                    <div class="card-header">
+                        <div class="card-section">${card.section}</div>
+                        <div class="card-id">${card.id} • Question ${card.number}</div>
+                    </div>
+                    <div class="question-text">${card.question}</div>
+                `;
+                
+                if (answerMode === 'multiple') {
+                    // MULTIPLE CHOICE MODE - Show all answers (clickable)
+                    frontHTML += '<ul class="answers-list">';
+                    card.answers.forEach((answer, idx) => {
+                        const isCorrect = idx === card.correct_index;
+                        frontHTML += `<li class="answer-item" onclick="checkAnswer(event, ${isCorrect})">${answer}</li>`;
+                    });
+                    frontHTML += '</ul>';
+                    frontHTML += '<div class="card-instruction">Click an answer to check if it\'s correct</div>';
+                } else {
+                    // CORRECT ONLY MODE - Just show instruction
+                    frontHTML += '<div class="card-instruction">Click to see answer</div>';
+                }
+                
+                document.getElementById('cardFront').innerHTML = frontHTML;
+                
+                // Back of card
+                let backHTML = '';
+                if (card.priority) {
+                    backHTML += '<div class="priority-badge">⭐ PRIORITY</div>';
+                }
+                backHTML += `
+                    <div class="card-header">
+                        <div class="card-section">${card.section}</div>
+                        <div class="card-id">${card.id} • Question ${card.number}</div>
+                    </div>
+                    <div class="question-text">${card.question}</div>
+                `;
+                
+                if (answerMode === 'multiple') {
+                    // MULTIPLE CHOICE MODE - Show all answers with correct one highlighted
                     backHTML += '<ul class="answers-list">';
                     card.answers.forEach((answer, idx) => {
                         const isCorrect = idx === card.correct_index;
@@ -941,37 +1053,60 @@
                     });
                     backHTML += '</ul>';
                 } else {
-                    // Show only the correct answer
+                    // CORRECT ONLY MODE - Show only the correct answer
+                    const correctAnswer = card.answers[card.correct_index];
                     backHTML += '<ul class="answers-list">';
                     backHTML += `<li class="answer-item correct">${correctAnswer}</li>`;
                     backHTML += '</ul>';
                 }
+                
+                // Add action buttons
+                backHTML += `
+                    <div class="card-actions">
+                        <button class="card-action-btn btn-mark ${isMarked ? 'marked' : ''}" onclick="toggleMark(${card.number})">
+                            ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
+                        </button>
+                        <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
+                            🚩 Report Error
+                        </button>
+                    </div>
+                `;
+                
+                backHTML += '<div class="card-instruction">Click to flip back</div>';
+                document.getElementById('cardBack').innerHTML = backHTML;
+                
+                // Show front
+                document.getElementById('cardFront').classList.add('active');
+                document.getElementById('cardBack').classList.remove('active');
             }
             
-            // Add action buttons
-            const isMarked = markedQuestions.has(card.number);
-            backHTML += `
-                <div class="card-actions">
-                    <button class="card-action-btn btn-mark ${isMarked ? 'marked' : ''}" onclick="toggleMark(${card.number})">
-                        ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
-                    </button>
-                    <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
-                        🚩 Report Error
-                    </button>
-                </div>
-            `;
+            // Save progress
+            localStorage.setItem('currentIndex', currentIndex);
+        }
+        
+        function checkAnswer(event, isCorrect) {
+            event.stopPropagation(); // Prevent card flip
+            const clickedItem = event.target;
             
-            backHTML += '<div class="card-instruction">Click to flip back</div>';
-            document.getElementById('cardBack').innerHTML = backHTML;
-            
-            // Show front
-            document.getElementById('cardFront').classList.add('active');
-            document.getElementById('cardBack').classList.remove('active');
-            
-            updateProgress();
+            if (isCorrect) {
+                // Correct answer - turn green and flip immediately
+                clickedItem.classList.add('correct');
+                flipCard();
+            } else {
+                // Wrong answer - turn red temporarily
+                clickedItem.classList.add('wrong');
+                
+                // Remove red after 1 second
+                setTimeout(() => {
+                    clickedItem.classList.remove('wrong');
+                }, 1000);
+            }
         }
         
         function flipCard() {
+            // Disable flipping in Full Display mode
+            if (answerMode === 'full') return;
+            
             const front = document.getElementById('cardFront');
             const back = document.getElementById('cardBack');
             
