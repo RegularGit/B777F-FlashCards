@@ -517,6 +517,24 @@
             margin-top: 20px;
         }
         
+        .memory-item-note {
+            background: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid #ff3b30;
+            padding: 12px 16px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        body.dark-mode .memory-item-note {
+            background: rgba(255, 59, 48, 0.15);
+        }
+        
+        .memory-item-answer {
+            text-align: left !important;
+        }
+        
         .card-actions {
             display: flex;
             gap: 10px;
@@ -896,7 +914,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 818 Questions • 284 Priority • v1.5.1</p>
+            <p>Click card to flip • 818 Questions • 284 Priority • v1.5.2</p>
         </div>
         
         <div class="controls" id="controls">
@@ -1375,7 +1393,14 @@
                     <div class="question-text">${card.question}</div>
                 `;
                 
-                if (answerMode === 'multiple') {
+                // Check if this is a MEMORY ITEMS question - these always show full answer format
+                const isMemoryItem = card.section === 'MEMORY ITEMS';
+                
+                if (isMemoryItem) {
+                    // MEMORY ITEMS - Show note explaining format, then click to reveal
+                    frontHTML += '<div class="memory-item-note">📋 Memory items require you to recall the complete procedure. Click to reveal the answer.</div>';
+                    frontHTML += '<div class="card-instruction">Click to see the memory item procedure</div>';
+                } else if (answerMode === 'multiple') {
                     // MULTIPLE CHOICE MODE - Show all answers (clickable) in shuffled order
                     frontHTML += '<ul class="answers-list">';
                     currentShuffledIndices.forEach(idx => {
@@ -1404,7 +1429,15 @@
                     <div class="question-text">${card.question}</div>
                 `;
                 
-                if (answerMode === 'multiple') {
+                if (isMemoryItem) {
+                    // MEMORY ITEMS - Always show only the correct answer (full procedure)
+                    let correctAnswer = card.answers[card.correct_index];
+                    correctAnswer = formatMemoryItem(correctAnswer);
+                    backHTML += '<div class="memory-item-note">📋 Complete Memory Item Procedure:</div>';
+                    backHTML += '<ul class="answers-list">';
+                    backHTML += `<li class="answer-item correct memory-item-answer">${correctAnswer}</li>`;
+                    backHTML += '</ul>';
+                } else if (answerMode === 'multiple') {
                     // MULTIPLE CHOICE MODE - Show all answers with correct one highlighted (same shuffled order as front)
                     backHTML += '<ul class="answers-list">';
                     currentShuffledIndices.forEach(idx => {
@@ -1707,6 +1740,13 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.5.2</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed MEMORY ITEMS display format - no longer shows as multiple choice</li>
+                        <li>Memory items now show explanatory note and reveal full procedure on click</li>
+                        <li>Memory item answers display with proper formatting for easy study</li>
+                    </ul>
+                </li>
                 <li><strong>v1.5.1</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Added colored text highlighting in Sections dropdown</li>
