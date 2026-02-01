@@ -605,11 +605,24 @@
             }
             
             .navigation {
-                margin-bottom: 10px;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: 0;
+                padding: 10px;
                 gap: 8px;
                 width: 100%;
                 max-width: 100%;
                 box-sizing: border-box;
+                background: var(--bg-gradient-start);
+                z-index: 100;
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
+            }
+            
+            /* Add padding to container to prevent content from being hidden behind fixed nav */
+            .container {
+                padding-bottom: 80px;
             }
             
             .progress-bar {
@@ -669,6 +682,83 @@
                 max-width: 100%;
             }
         }
+        
+        /* Help Modal */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .help-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .help-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .help-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+        
+        .help-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .help-content h3 {
+            color: var(--text-primary);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .help-content p, .help-content ul {
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .help-content ul {
+            padding-left: 20px;
+        }
+        
+        .help-content li {
+            margin-bottom: 8px;
+        }
+        
+        .help-content code {
+            background: var(--answer-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -721,6 +811,7 @@
                         <span class="shuffle-icon">🔀</span> Shuffle
                     </button>
                     <button class="btn btn-secondary" onclick="resetProgress()">↺ Reset</button>
+                    <button class="btn btn-secondary" onclick="toggleHelp()">❓ Help</button>
                     <button class="btn btn-secondary" id="darkModeToggle" onclick="toggleDarkMode()">🌙 Night Mode</button>
                 </div>
             </div>
@@ -872,6 +963,17 @@
             } else {
                 button.textContent = '🌙 Night Mode';
                 localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+        
+        function toggleHelp() {
+            const modal = document.getElementById('helpModal');
+            modal.classList.toggle('active');
+        }
+        
+        function closeHelpOnOutsideClick(event) {
+            if (event.target.id === 'helpModal') {
+                toggleHelp();
             }
         }
         
@@ -1189,5 +1291,96 @@
             document.getElementById('controls').classList.add('collapsed');
         }
     </script>
+    
+    <!-- Help Modal -->
+    <div class="help-modal" id="helpModal" onclick="closeHelpOnOutsideClick(event)">
+        <div class="help-content">
+            <button class="help-close" onclick="toggleHelp()">×</button>
+            <h2>✈️ B777F Flashcards - Help Guide</h2>
+            
+            <h3>📝 Display Modes</h3>
+            <ul>
+                <li><strong>Multiple Choice:</strong> See all answer options. Click any answer to check if it's correct (wrong = red flash, correct = green and auto-flip)</li>
+                <li><strong>Correct Only:</strong> See only the question. Click to reveal just the correct answer</li>
+                <li><strong>Full Display:</strong> See question and answer together. No flipping needed - perfect for quick review</li>
+            </ul>
+            
+            <h3>🎯 Question Sets</h3>
+            <ul>
+                <li><strong>All Questions:</strong> Study all 754 questions</li>
+                <li><strong>⭐ Priority Only:</strong> Focus on 221 priority questions</li>
+                <li><strong>🚩 Flagged:</strong> Review questions you've marked for later</li>
+            </ul>
+            
+            <h3>🚩 Flag for Review</h3>
+            <ul>
+                <li>Click the flag button on any card to mark it for review</li>
+                <li>Flagged questions are saved automatically</li>
+                <li>Switch to "Flagged" mode to study only flagged questions</li>
+            </ul>
+            
+            <h3>🔍 Filter by Section</h3>
+            <ul>
+                <li>Use dropdown to study specific aircraft systems</li>
+                <li>18 sections available (Aircraft General, Engines, Hydraulics, etc.)</li>
+            </ul>
+            
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <ul>
+                <li><code>Space</code> or <code>Enter</code> - Flip card</li>
+                <li><code>→</code> Arrow - Next card</li>
+                <li><code>←</code> Arrow - Previous card</li>
+            </ul>
+            
+            <h3>📱 Mobile Gestures</h3>
+            <ul>
+                <li><strong>Tap card</strong> - Flip to see answer</li>
+                <li><strong>Swipe left</strong> - Next card</li>
+                <li><strong>Swipe right</strong> - Previous card</li>
+            </ul>
+            
+            <h3>💾 Auto-Save</h3>
+            <ul>
+                <li>Your progress is saved automatically</li>
+                <li>Return anytime and pick up where you left off</li>
+                <li>Flagged questions and settings are remembered</li>
+            </ul>
+            
+            <h3>🔀 Other Features</h3>
+            <ul>
+                <li><strong>Shuffle:</strong> Randomize question order</li>
+                <li><strong>Reset:</strong> Start over from question 1</li>
+                <li><strong>🌙 Night Mode:</strong> Easy on the eyes for late-night studying</li>
+            </ul>
+            
+            <h3 style="margin-top: 30px; color: #dc3545;">⚠️ Important Legal Disclaimer</h3>
+            <div style="padding: 15px; background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 4px; margin-top: 10px;">
+                <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-primary);">
+                    FOR STUDY PURPOSES ONLY - NOT FOR OPERATIONAL USE
+                </p>
+                <p style="margin-bottom: 10px; line-height: 1.6; color: var(--text-primary);">
+                    This flashcard application is provided as a study aid only and should not be relied upon as a sole source of information for aircraft operations, training, or certification purposes. While every effort has been made to ensure accuracy, this content may contain errors, omissions, or outdated information.
+                </p>
+                <p style="margin-bottom: 10px; line-height: 1.6; color: var(--text-primary);">
+                    <strong>Always verify all information with official sources including:</strong>
+                </p>
+                <ul style="margin-bottom: 10px; padding-left: 20px;">
+                    <li style="margin-bottom: 5px;">Boeing 777F Flight Crew Operations Manual (FCOM)</li>
+                    <li style="margin-bottom: 5px;">Your company's Standard Operating Procedures (SOPs)</li>
+                    <li style="margin-bottom: 5px;">Aircraft Flight Manual (AFM)</li>
+                    <li style="margin-bottom: 5px;">Quick Reference Handbook (QRH)</li>
+                    <li style="margin-bottom: 5px;">Current regulatory guidance (FAA/EASA/ICAO)</li>
+                    <li style="margin-bottom: 5px;">Your airline's training department and approved materials</li>
+                </ul>
+                <p style="margin-bottom: 0; line-height: 1.6; font-size: 13px; color: var(--text-primary);">
+                    <strong>No Warranty:</strong> This application is provided "as is" without warranty of any kind. The creators assume no liability for any errors, inaccuracies, or consequences resulting from the use of this study tool. Users are solely responsible for verifying all information and ensuring compliance with applicable regulations and company procedures.
+                </p>
+            </div>
+            
+            <p style="margin-top: 20px; text-align: center; color: var(--text-secondary);">
+                Study smart, fly safe! Good luck with your B777F oral exam! 🎓✈️
+            </p>
+        </div>
+    </div>
 </body>
 </html>
