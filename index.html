@@ -265,6 +265,39 @@
             border-color: #4a5568;
         }
         
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        body.dark-mode input[type="text"] {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-color: #4a5568;
+        }
+        
+        body.dark-mode input[type="text"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        
+        body.dark-mode input[type="text"]::placeholder {
+            color: #a0aec0;
+        }
+        
         .stats {
             display: flex;
             justify-content: space-around;
@@ -686,6 +719,13 @@
                 max-width: 100%;
             }
             
+            input[type="text"] {
+                font-size: 13px;
+                padding: 8px;
+                width: 100%;
+                max-width: 100%;
+            }
+            
             /* Mobile dark mode overrides */
             body.dark-mode .controls-toggle {
                 background: #4a5568;
@@ -778,38 +818,35 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 754 Questions • 221 Priority</p>
+            <p>Click card to flip • 754 Questions • 221 Priority • v1.1.0</p>
         </div>
         
         <div class="controls" id="controls">
             <button class="controls-toggle" onclick="toggleControls()">⚙️ Settings</button>
             <div class="controls-content">
             <div class="filter-section">
-                <label>Question Set:</label>
+                <label>📋 Question Set:</label>
                 <div class="button-group">
-                    <button class="btn btn-primary active" onclick="setMode('all')">All Questions</button>
+                    <button class="btn btn-primary active" onclick="setMode('all')">📚 All Questions</button>
                     <button class="btn btn-priority" onclick="setMode('priority')">⭐ Priority Only (221)</button>
                     <button class="btn btn-marked" onclick="setMode('marked')">🚩 Flagged (<span id="markedCount">0</span>)</button>
                 </div>
             </div>
             
             <div class="filter-section">
-                <label>Answer Display:</label>
-                <div class="button-group">
-                    <button class="btn btn-secondary active" onclick="setAnswerMode('multiple')">Multiple Choice</button>
-                    <button class="btn btn-secondary" onclick="setAnswerMode('correct')">Correct Answer Only</button>
-                </div>
-            </div>
-            
-            <div class="filter-section">
-                <label>Filter by Section:</label>
+                <label>🔍 Filter by Section:</label>
                 <select id="sectionFilter" onchange="filterBySection()">
                     <option value="all">All Sections</option>
                 </select>
             </div>
             
             <div class="filter-section">
-                <label>Display Mode:</label>
+                <label>🔎 Search Questions:</label>
+                <input type="text" id="searchInput" placeholder="Type to search questions..." oninput="searchQuestions()">
+            </div>
+            
+            <div class="filter-section">
+                <label>🃏 Card Display Mode:</label>
                 <div class="button-group">
                     <button class="btn btn-mode" id="modeMultiple" onclick="setAnswerMode('multiple')">📝 Multiple Choice</button>
                     <button class="btn btn-mode" id="modeCorrect" onclick="setAnswerMode('correct')">✓ Correct Only</button>
@@ -818,7 +855,7 @@
             </div>
             
             <div class="filter-section">
-                <label>Options:</label>
+                <label>⚙️ Options:</label>
                 <div class="button-group">
                     <button class="btn btn-secondary" onclick="shuffleCards()">
                         <span class="shuffle-icon">🔀</span> Shuffle
@@ -874,6 +911,7 @@
         let currentMode = 'all';
         let currentSection = 'all';
         let answerMode = 'multiple'; // 'multiple', 'correct', or 'full'
+        let currentSearchTerm = ''; // Search term for filtering questions
         let markedQuestions = new Set(); // Track marked question numbers
         
         // Load marked questions from localStorage
@@ -1064,6 +1102,8 @@
         }
         
         function filterQuestions() {
+            const searchTerm = currentSearchTerm.toLowerCase().trim();
+            
             currentQuestions = allQuestions.filter(q => {
                 let modeMatch;
                 if (currentMode === 'all') {
@@ -1077,13 +1117,43 @@
                 }
                 
                 const sectionMatch = currentSection === 'all' || q.section === currentSection;
-                return modeMatch && sectionMatch;
+                
+                // Search in question text and answers
+                let searchMatch = true;
+                if (searchTerm) {
+                    const questionText = q.question.toLowerCase();
+                    const answersText = q.answers.join(' ').toLowerCase();
+                    const sectionText = q.section.toLowerCase();
+                    searchMatch = questionText.includes(searchTerm) || 
+                                  answersText.includes(searchTerm) ||
+                                  sectionText.includes(searchTerm);
+                }
+                
+                return modeMatch && sectionMatch && searchMatch;
             });
             
             currentIndex = 0;
             displayCard();
             updateStats();
         }
+        
+        function searchQuestions() {
+            currentSearchTerm = document.getElementById('searchInput').value;
+            filterQuestions();
+        }
+        
+        // Shuffle array helper function (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // Store current shuffled answer order for consistency between front/back
+        let currentShuffledIndices = [];
         
         function displayCard() {
             if (currentQuestions.length === 0) {
@@ -1094,6 +1164,9 @@
             
             const card = currentQuestions[currentIndex];
             const isMarked = markedQuestions.has(card.number);
+            
+            // Create shuffled answer indices for multiple choice mode
+            currentShuffledIndices = shuffleArray([...Array(card.answers.length).keys()]);
             
             if (answerMode === 'full') {
                 // FULL DISPLAY MODE - Show question and answer together, no flipping
@@ -1117,7 +1190,7 @@
                             ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
                         </button>
                         <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
-                            🚩 Report Error
+                            ⚠️ Report Error
                         </button>
                     </div>
                 `;
@@ -1145,11 +1218,11 @@
                 `;
                 
                 if (answerMode === 'multiple') {
-                    // MULTIPLE CHOICE MODE - Show all answers (clickable)
+                    // MULTIPLE CHOICE MODE - Show all answers (clickable) in shuffled order
                     frontHTML += '<ul class="answers-list">';
-                    card.answers.forEach((answer, idx) => {
+                    currentShuffledIndices.forEach(idx => {
                         const isCorrect = idx === card.correct_index;
-                        frontHTML += `<li class="answer-item" onclick="checkAnswer(event, ${isCorrect})">${answer}</li>`;
+                        frontHTML += `<li class="answer-item" onclick="checkAnswer(event, ${isCorrect})">${card.answers[idx]}</li>`;
                     });
                     frontHTML += '</ul>';
                     frontHTML += '<div class="card-instruction">Click an answer to check if it\'s correct</div>';
@@ -1174,11 +1247,11 @@
                 `;
                 
                 if (answerMode === 'multiple') {
-                    // MULTIPLE CHOICE MODE - Show all answers with correct one highlighted
+                    // MULTIPLE CHOICE MODE - Show all answers with correct one highlighted (same shuffled order as front)
                     backHTML += '<ul class="answers-list">';
-                    card.answers.forEach((answer, idx) => {
+                    currentShuffledIndices.forEach(idx => {
                         const isCorrect = idx === card.correct_index;
-                        backHTML += `<li class="answer-item ${isCorrect ? 'correct' : ''}">${answer}</li>`;
+                        backHTML += `<li class="answer-item ${isCorrect ? 'correct' : ''}">${card.answers[idx]}</li>`;
                     });
                     backHTML += '</ul>';
                 } else {
@@ -1196,7 +1269,7 @@
                             ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
                         </button>
                         <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
-                            🚩 Report Error
+                            ⚠️ Report Error
                         </button>
                     </div>
                 `;
@@ -1215,10 +1288,10 @@
         
         function checkAnswer(event, isCorrect) {
             event.stopPropagation(); // Prevent card flip
-            const clickedItem = event.target;
+            const clickedItem = event.currentTarget; // Use currentTarget for reliable mobile targeting
             
             if (isCorrect) {
-                // Correct answer - turn green and flip immediately
+                // Correct answer - turn green and flip
                 clickedItem.classList.add('correct');
                 flipCard();
             } else {
@@ -1311,7 +1384,7 @@
     <div class="help-modal" id="helpModal" onclick="closeHelpOnOutsideClick(event)">
         <div class="help-content">
             <button class="help-close" onclick="toggleHelp()">×</button>
-            <h2>✈️ B777F Flashcards - Help Guide</h2>
+            <h2><svg style="width:24px;height:24px;vertical-align:middle;margin-right:5px;" viewBox="0 0 24 24"><path fill="currentColor" d="M21,16V14L13,9V3.5A1.5,1.5,0,0,0,11.5,2A1.5,1.5,0,0,0,10,3.5V9L2,14V16L10,13.5V19L8,20.5V22L11.5,21L15,22V20.5L13,19V13.5L21,16Z"/></svg>B777F Flashcards - Help Guide</h2>
             
             <h3>📝 Display Modes</h3>
             <ul>
@@ -1338,6 +1411,14 @@
             <ul>
                 <li>Use dropdown to study specific aircraft systems</li>
                 <li>18 sections available (Aircraft General, Engines, Hydraulics, etc.)</li>
+            </ul>
+            
+            <h3>🔎 Search Questions</h3>
+            <ul>
+                <li>Type keywords to find specific questions instantly</li>
+                <li>Searches questions, answers, and section names</li>
+                <li>Works with all filters (Priority, Flagged, Section)</li>
+                <li>Clear search to return to full question set</li>
             </ul>
             
             <h3>⌨️ Keyboard Shortcuts</h3>
@@ -1393,7 +1474,7 @@
             </div>
             
             <p style="margin-top: 20px; text-align: center; color: var(--text-secondary);">
-                Study smart, fly safe! Good luck with your B777F oral exam! 🎓✈️
+                Study smart, fly safe! Good luck with your B777F oral exam! 🎓<svg style="width:18px;height:18px;vertical-align:middle;margin-left:3px;" viewBox="0 0 24 24"><path fill="currentColor" d="M21,16V14L13,9V3.5A1.5,1.5,0,0,0,11.5,2A1.5,1.5,0,0,0,10,3.5V9L2,14V16L10,13.5V19L8,20.5V22L11.5,21L15,22V20.5L13,19V13.5L21,16Z"/></svg>
             </p>
         </div>
     </div>
