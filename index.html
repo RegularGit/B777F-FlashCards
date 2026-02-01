@@ -176,7 +176,6 @@
             }
             
             .flashcard:hover {
-                transform: translateY(-5px);
                 box-shadow: 0 15px 40px rgba(0,0,0,0.25);
             }
         }
@@ -615,7 +614,7 @@
                 <div class="button-group">
                     <button class="btn btn-primary active" onclick="setMode('all')">All Questions</button>
                     <button class="btn btn-priority" onclick="setMode('priority')">⭐ Priority Only (221)</button>
-                    <button class="btn btn-marked" onclick="setMode('marked')">⭐ Marked (<span id="markedCount">0</span>)</button>
+                    <button class="btn btn-marked" onclick="setMode('marked')">🚩 Flagged (<span id="markedCount">0</span>)</button>
                 </div>
             </div>
             
@@ -954,7 +953,7 @@
             backHTML += `
                 <div class="card-actions">
                     <button class="card-action-btn btn-mark ${isMarked ? 'marked' : ''}" onclick="toggleMark(${card.number})">
-                        ${isMarked ? '⭐ Marked' : '☆ Mark for Review'}
+                        ${isMarked ? '🚩 Flagged' : '🚩 Flag for Review'}
                     </button>
                     <button class="card-action-btn btn-report" onclick="reportError(${card.number})">
                         🚩 Report Error
