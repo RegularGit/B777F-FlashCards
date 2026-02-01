@@ -25,8 +25,8 @@
         }
         
         body.dark-mode {
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
+            --bg-gradient-start: #2d3a6e;
+            --bg-gradient-end: #4a3470;
             --card-bg: #2d3748;
             --text-primary: #e2e8f0;
             --text-secondary: #a0aec0;
@@ -680,6 +680,15 @@
                 padding: 8px;
                 width: 100%;
                 max-width: 100%;
+            }
+            
+            /* Mobile dark mode overrides */
+            body.dark-mode .controls-toggle {
+                background: #4a5568;
+            }
+            
+            body.dark-mode .controls {
+                background: var(--controls-bg);
             }
         }
         
