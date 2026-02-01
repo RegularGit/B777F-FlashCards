@@ -452,6 +452,56 @@
             text-align: left;
             font-weight: normal;
         }
+        
+        /* Base procedure styles - work anywhere */
+        .procedure-step {
+            display: block;
+            margin: 8px 0;
+            font-weight: normal;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .procedure-step:last-child {
+            border-bottom: none;
+        }
+        .procedure-step:first-child {
+            margin-top: 0;
+        }
+        .step-number {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+        .step-action {
+            display: block;
+            margin-left: 20px;
+            margin-top: 4px;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        body.dark-mode .step-action {
+            color: #81c784;
+        }
+        .sub-step {
+            display: block;
+            margin-left: 25px;
+            margin-top: 4px;
+            padding: 3px 0;
+        }
+        .procedure-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        body.dark-mode .step-number {
+            color: #5dade2;
+        }
+        body.dark-mode .procedure-step {
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Legacy selectors for backwards compatibility */
         .answer-item.correct .procedure-step {
             display: block;
             margin: 8px 0;
@@ -914,7 +964,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 818 Questions • 284 Priority • v1.5.2</p>
+            <p>Click card to flip • 818 Questions • 284 Priority • v1.5.4</p>
         </div>
         
         <div class="controls" id="controls">
@@ -1269,8 +1319,9 @@
         
         // Format memory item procedure text with HTML for proper display
         function formatMemoryItem(text) {
-            // Split by newlines
-            let lines = text.split('\\n');
+            // Split by either actual newlines OR literal \n sequences
+            let lines = text.split(/\n|\\n/);
+            
             let html = '<div class="memory-procedure">';
             
             lines.forEach(line => {
@@ -1348,7 +1399,8 @@
                 }
                 // Format answer for memory items
                 let displayAnswer = card.answers[card.correct_index];
-                if (card.section === 'MEMORY ITEMS') {
+                const isMemoryItemFull = card.section === 'MEMORY ITEMS';
+                if (isMemoryItemFull) {
                     displayAnswer = formatMemoryItem(displayAnswer);
                 }
                 fullHTML += `
@@ -1357,8 +1409,13 @@
                         <div class="card-id">${card.id} • Question ${card.number}</div>
                     </div>
                     <div class="question-text">${card.question}</div>
+                `;
+                if (isMemoryItemFull) {
+                    fullHTML += '<div class="memory-item-note">📋 Complete Memory Item Procedure:</div>';
+                }
+                fullHTML += `
                     <div style="margin: 20px 0; padding: 15px; background: var(--answer-correct-bg); border: 2px solid var(--answer-correct-border); border-radius: 8px;">
-                        <div style="font-weight: bold; margin-bottom: 10px; color: var(--answer-correct-border);">✓ Answer:</div>
+                        ${!isMemoryItemFull ? '<div style="font-weight: bold; margin-bottom: 10px; color: var(--answer-correct-border);">✓ Answer:</div>' : ''}
                         <div style="font-size: 16px;">${displayAnswer}</div>
                     </div>
                     <div class="card-actions">
@@ -1740,6 +1797,18 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.5.4</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed CSS scoping issue - procedure steps now display correctly in all modes</li>
+                        <li>Memory item procedures now show all steps with proper formatting</li>
+                    </ul>
+                </li>
+                <li><strong>v1.5.3</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed memory item procedure parsing - now correctly displays all steps</li>
+                        <li>Fixed newline handling in formatMemoryItem function</li>
+                    </ul>
+                </li>
                 <li><strong>v1.5.2</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Fixed MEMORY ITEMS display format - no longer shows as multiple choice</li>
