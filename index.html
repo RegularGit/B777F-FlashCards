@@ -120,6 +120,29 @@
             text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         }
         
+        .refresh-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 5px;
+            padding: 0;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: rotate(180deg);
+        }
+        
+        .refresh-btn:active {
+            transform: rotate(360deg);
+        }
+        
         .controls {
             background: var(--controls-bg);
             padding: 20px;
@@ -978,7 +1001,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.5.9</p>
+            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.0 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="controls" id="controls">
@@ -1209,6 +1232,19 @@
             } else {
                 button.textContent = '🌙 Night Mode';
                 localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+        
+        function forceUpdate() {
+            if (confirm('Check for updates? This will reload the app and you will lose your current position.')) {
+                // Clear caches and force reload
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+                // Force reload bypassing cache
+                window.location.reload(true);
             }
         }
         
@@ -1872,6 +1908,11 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.0</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Added 🔄 refresh button in header for easy updates (especially for iOS home screen users)</li>
+                    </ul>
+                </li>
                 <li><strong>v1.5.9</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Reorganized filter buttons: Priority (226) now excludes Limitations/Memory Items</li>
