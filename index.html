@@ -6,6 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2d3a6e" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#667eea" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-title" content="B777F Study">
     <title>B777F Oral Questions Flashcards</title>
     
@@ -65,6 +67,7 @@
             width: 100%;
             position: fixed;
             height: 100%;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
         }
         
         body {
@@ -1042,7 +1045,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.7 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.8 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1364,7 +1367,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.6.7';
+        const APP_VERSION = '1.6.8';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -1989,6 +1992,11 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.8</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed white strip behind status bar/notch on iOS dark mode by adding theme-color meta tags and html background</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.7</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Q783: Fixed wording — changed "maximum and minimum limits" to "maximum limits" to avoid overlap with Q784 (caution/amber limits)</li>
