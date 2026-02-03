@@ -469,13 +469,15 @@
             cursor: pointer;
         }
         
-        .answer-item:hover {
-            background: #e8e8e8;
-            transform: translateX(5px);
-        }
-        
-        body.dark-mode .answer-item:hover {
-            background: #3a4555;
+        @media (hover: hover) {
+            .answer-item:hover {
+                background: #e8e8e8;
+                transform: translateX(5px);
+            }
+            
+            body.dark-mode .answer-item:hover {
+                background: #3a4555;
+            }
         }
         
         .answer-item.correct {
@@ -758,6 +760,20 @@
             
             .controls:not(.collapsed) {
                 padding: 12px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+                overflow-y: auto;
+                border-radius: 0;
+                margin: 0;
+                background: rgba(255, 255, 255, 0.97);
+            }
+            
+            body.dark-mode .controls:not(.collapsed) {
+                background: rgba(45, 55, 72, 0.97);
             }
             
             .controls:not(.collapsed) .controls-toggle {
@@ -1001,7 +1017,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.0 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.1 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="controls" id="controls">
@@ -1908,6 +1924,12 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.1</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed: Answer hover highlight no longer triggers while swiping on mobile</li>
+                        <li>Fixed: Settings panel now displays as full-screen overlay on mobile (no longer washes out header)</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.0</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Added 🔄 refresh button in header for easy updates (especially for iOS home screen users)</li>
