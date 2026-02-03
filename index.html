@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -67,6 +67,7 @@
             width: 100%;
             position: fixed;
             height: 100%;
+            background-color: #2d3a6e;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
         }
         
@@ -76,6 +77,8 @@
             min-height: 100vh;
             height: 100%;
             padding: 10px;
+            padding-top: max(10px, env(safe-area-inset-top));
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
             color: var(--text-primary);
             margin: 0;
             overflow-x: hidden;
@@ -1045,7 +1048,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.8 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.9 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1367,7 +1370,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.6.8';
+        const APP_VERSION = '1.6.9';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -1992,6 +1995,11 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.9</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed white strip behind notch/status bar on iOS by adding viewport-fit=cover, safe-area inset padding, and hard-coded html background color</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.8</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Fixed white strip behind status bar/notch on iOS dark mode by adding theme-color meta tags and html background</li>
