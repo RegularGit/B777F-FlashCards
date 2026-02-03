@@ -143,6 +143,30 @@
             transform: rotate(360deg);
         }
         
+        .update-banner {
+            display: none;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7c948 100%);
+            color: white;
+            text-align: center;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            animation: pulse-banner 2s ease-in-out infinite;
+        }
+        
+        .update-banner.visible {
+            display: block;
+        }
+        
+        @keyframes pulse-banner {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        
         .controls {
             background: var(--controls-bg);
             padding: 20px;
@@ -1017,7 +1041,11 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.4 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.5 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+        </div>
+        
+        <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
+            🔄 Update available! Tap here to refresh.
         </div>
         
         <div class="controls" id="controls">
@@ -1335,6 +1363,26 @@
         }
         
         // Load dark mode preference on page load
+        const APP_VERSION = '1.6.5';
+        
+        function checkForUpdates() {
+            const versionUrl = 'version.txt?t=' + Date.now();
+            fetch(versionUrl)
+                .then(response => {
+                    if (response.ok) return response.text();
+                    throw new Error('Failed to fetch version');
+                })
+                .then(latestVersion => {
+                    latestVersion = latestVersion.trim();
+                    if (latestVersion !== APP_VERSION) {
+                        document.getElementById('updateBanner').classList.add('visible');
+                    }
+                })
+                .catch(error => {
+                    // Silently fail - don't bother user if check fails
+                });
+        }
+        
         function loadDarkModePreference() {
             const darkMode = localStorage.getItem('darkMode');
             if (darkMode === 'enabled') {
@@ -1834,6 +1882,9 @@
         // Load dark mode preference
         loadDarkModePreference();
         
+        // Check for updates
+        checkForUpdates();
+        
         // Auto-collapse settings on mobile devices
         if (window.innerWidth <= 600) {
             document.getElementById('controls').classList.add('collapsed');
@@ -1928,13 +1979,21 @@
             
             <h3>🔄 Getting Updates</h3>
             <ul>
-                <li>New features and corrections are added periodically</li>
-                <li>To load the latest version, refresh your browser (pull down on mobile, or press F5/Ctrl+R on desktop)</li>
+                <li>The app automatically checks for updates when you open it</li>
+                <li>If an update is available, an orange banner will appear — tap it to refresh when you're ready</li>
+                <li>Updates will never interrupt you mid-session</li>
+                <li>You can also manually check using the 🔄 button in the header</li>
                 <li>If changes don't appear, try clearing your browser cache or doing a hard refresh (Ctrl+Shift+R)</li>
             </ul>
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.5</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>App now checks for updates on load and shows a banner if a new version is available</li>
+                        <li>Update check is non-intrusive - won't interrupt mid-session</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.4</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Search now supports question numbers (e.g. type "119" to find Q119) and question IDs</li>
