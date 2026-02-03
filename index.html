@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#2d3a6e">
     <meta name="theme-color" content="#2d3a6e" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#667eea" media="(prefers-color-scheme: light)">
@@ -78,7 +78,6 @@
             min-height: 100vh;
             height: 100%;
             padding: 10px;
-            padding-top: calc(10px + env(safe-area-inset-top));
             color: var(--text-primary);
             margin: 0;
             overflow-x: hidden;
@@ -1048,7 +1047,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.1 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 842 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.2 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1370,7 +1369,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.7.1';
+        const APP_VERSION = '1.7.2';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -1995,6 +1994,11 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.7.2</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed iOS PWA notch color: changed status bar style to 'default' so iOS colors the notch area using theme-color, without affecting content layout</li>
+                    </ul>
+                </li>
                 <li><strong>v1.7.1</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Fixed iOS PWA notch: re-added viewport-fit=cover with top-only safe-area padding so background fills behind notch while content stays in place</li>
