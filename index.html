@@ -1017,7 +1017,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.3 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.4 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="controls" id="controls">
@@ -1374,9 +1374,13 @@
                     const questionText = q.question.toLowerCase();
                     const answersText = q.answers.join(' ').toLowerCase();
                     const sectionText = q.section.toLowerCase();
+                    const numberText = q.number.toString();
+                    const idText = q.id.toLowerCase();
                     searchMatch = questionText.includes(searchTerm) || 
                                   answersText.includes(searchTerm) ||
-                                  sectionText.includes(searchTerm);
+                                  sectionText.includes(searchTerm) ||
+                                  numberText === searchTerm ||
+                                  idText.includes(searchTerm);
                 }
                 
                 return modeMatch && sectionMatch && searchMatch;
@@ -1887,7 +1891,7 @@
             <h3>🔎 Search Questions</h3>
             <ul>
                 <li>Type keywords to find specific questions instantly</li>
-                <li>Searches questions, answers, and section names</li>
+                <li>Searches question numbers, question IDs, questions, answers, and section names</li>
                 <li>Works with all filters (Priority, Flagged, Section)</li>
                 <li>Clear search to return to full question set</li>
             </ul>
@@ -1931,6 +1935,11 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.4</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Search now supports question numbers (e.g. type "119" to find Q119) and question IDs</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.3</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Q119: Corrected main gear aft axle steering angle from 7° to 13° (7° is the rudder pedal steering limit, not the aft axle activation angle)</li>
