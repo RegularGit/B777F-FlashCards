@@ -1017,7 +1017,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.1 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 843 Questions • 226 Priority • 82 Limitations/Memory Items • v1.6.2 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="controls" id="controls">
@@ -1295,7 +1295,7 @@
             if (!card) return;
             
             // Show confirmation with detailed prompt
-            const userDescription = prompt('Please describe the error:\n\n• What is wrong with this question?\n• If possible, what should the correct answer be?\n• Any other notes or corrections?');
+            const userDescription = prompt('📝 Report an Error (Anonymous)\n\nYour report is completely anonymous - no personal information is collected or sent.\n\n• What is wrong with this question?\n• If possible, what should the correct answer be?\n• Any other notes or corrections?');
             
             if (userDescription === null) {
                 // User clicked cancel
@@ -1324,7 +1324,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    alert('✅ Error report submitted successfully!\n\nThank you for helping improve the questions.');
+                    alert('✅ Error report submitted anonymously!\n\nThank you for helping improve the questions.');
                 } else {
                     alert('⚠️ There was an issue submitting the report. Please try again.');
                 }
@@ -1864,6 +1864,13 @@
                 <li>Switch to "Flagged" mode to study only flagged questions</li>
             </ul>
             
+            <h3>⚠️ Report Error</h3>
+            <ul>
+                <li>Click the "Report Error" button on any card to report an incorrect or misleading question</li>
+                <li>All reports are completely anonymous - no personal information is collected or sent</li>
+                <li>Reports help improve the quality of questions for everyone</li>
+            </ul>
+            
             <h3>🎓 How To Study</h3>
             <ul>
                 <li><strong>Step 1 - Learn:</strong> Complete all questions (or at minimum the Priority questions) in <em>Full Display</em> mode. This shows question and answer together so you learn the correct answers first</li>
@@ -1924,6 +1931,12 @@
             
             <h3>📋 App Changes Log</h3>
             <ul>
+                <li><strong>v1.6.2</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Report Error now clearly states reports are anonymous</li>
+                        <li>Added "Report Error" section to Help with anonymity info</li>
+                    </ul>
+                </li>
                 <li><strong>v1.6.1</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Fixed: Answer hover highlight no longer triggers while swiping on mobile</li>
