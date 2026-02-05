@@ -891,9 +891,9 @@
                 box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
             }
             
-            /* Add padding to container to prevent content from being hidden behind fixed nav */
+            /* Add padding to container to prevent content from being hidden behind fixed nav + stats */
             .container {
-                padding-bottom: 80px;
+                padding-bottom: 150px;
             }
             
             .progress-bar {
@@ -904,11 +904,16 @@
             
             .mobile-stats {
                 display: block;
+                position: fixed;
+                bottom: 58px;
+                left: 0;
+                right: 0;
                 background: var(--card-bg);
-                border-radius: 10px;
-                padding: 10px 12px;
-                margin-bottom: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                border-radius: 0;
+                padding: 8px 12px;
+                margin: 0;
+                box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+                z-index: 100;
             }
             
             .mobile-progress-bar {
@@ -1140,7 +1145,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.8.0 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.8.1 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1508,7 +1513,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.8.0';
+        const APP_VERSION = '1.8.1';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -2188,6 +2193,12 @@
             <h2>📋 App Changes Log</h2>
             
             <ul>
+                <li><strong>v1.8.1</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed mobile progress stats bar - now fixed above navigation buttons instead of floating below card</li>
+                        <li>Progress/stats no longer jump around when card content changes height</li>
+                    </ul>
+                </li>
                 <li><strong>v1.8.0</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>New approach to notch coloring - reverted viewport-fit=cover which caused layout instability</li>
