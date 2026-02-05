@@ -68,7 +68,6 @@
             width: 100%;
             position: fixed;
             height: 100%;
-            min-height: calc(100% + env(safe-area-inset-top));
             background-color: #2d3a6e;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
         }
@@ -76,8 +75,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            min-height: calc(100vh + env(safe-area-inset-top));
-            height: calc(100% + env(safe-area-inset-top));
+            min-height: 100vh;
+            height: 100%;
             padding: 10px;
             color: var(--text-primary);
             margin: 0;
@@ -745,11 +744,11 @@
             
             body {
                 padding: 5px;
-                padding-top: env(safe-area-inset-top);
             }
             
             .container {
                 padding: 0;
+                padding-top: env(safe-area-inset-top);
                 max-width: 100%;
             }
             
@@ -1144,7 +1143,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.8 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.9 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1502,7 +1501,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.7.8';
+        const APP_VERSION = '1.7.9';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -2181,6 +2180,13 @@
             <h2>📋 App Changes Log</h2>
             
             <ul>
+                <li><strong>v1.7.9</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed bottom navigation jumping/ghost button issue caused by height hacks</li>
+                        <li>Moved safe-area padding from body to container for stable layout</li>
+                        <li>Reverted html/body height calc changes that caused layout instability</li>
+                    </ul>
+                </li>
                 <li><strong>v1.7.8</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Fixed iPhone notch white strip - background gradient now extends behind the notch/status bar area</li>
