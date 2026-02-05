@@ -731,6 +731,11 @@
             margin-left: 5px;
         }
         
+        /* Mobile-only stats - hidden on desktop */
+        .mobile-stats {
+            display: none;
+        }
+        
         @media (max-width: 600px) {
             html, body {
                 overflow-x: hidden;
@@ -895,6 +900,57 @@
                 margin-bottom: 10px;
                 width: 100%;
                 max-width: 100%;
+            }
+            
+            .mobile-stats {
+                display: block;
+                background: var(--card-bg);
+                border-radius: 10px;
+                padding: 10px 12px;
+                margin-bottom: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .mobile-progress-bar {
+                margin-bottom: 8px;
+            }
+            
+            .mobile-stats-row {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+            
+            .mobile-stat {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+            }
+            
+            .mobile-stat-value {
+                font-size: 16px;
+                font-weight: 700;
+                color: #667eea;
+            }
+            
+            body.dark-mode .mobile-stat-value {
+                color: #90cdf4;
+            }
+            
+            .mobile-stat-label {
+                font-size: 9px;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .mobile-session-score {
+                color: #28a745;
+            }
+            
+            .mobile-session-score.has-incorrect {
+                color: #ffc107;
             }
             
             .stats {
@@ -1084,7 +1140,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.6 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.7 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1176,6 +1232,31 @@
             <div class="flashcard" id="flashcard" onclick="flipCard()">
                 <div class="card-side active" id="cardFront"></div>
                 <div class="card-side" id="cardBack"></div>
+            </div>
+        </div>
+        
+        <!-- Mobile-only progress stats -->
+        <div class="mobile-stats" id="mobileStats">
+            <div class="progress-bar mobile-progress-bar">
+                <div class="progress-fill" id="mobileProgressFill"></div>
+            </div>
+            <div class="mobile-stats-row">
+                <div class="mobile-stat">
+                    <span class="mobile-stat-value" id="mobileCurrentCard">1</span>
+                    <span class="mobile-stat-label">Card</span>
+                </div>
+                <div class="mobile-stat">
+                    <span class="mobile-stat-value" id="mobileTotalCards">754</span>
+                    <span class="mobile-stat-label">Total</span>
+                </div>
+                <div class="mobile-stat">
+                    <span class="mobile-stat-value" id="mobilePriorityCount">226</span>
+                    <span class="mobile-stat-label">Priority</span>
+                </div>
+                <div class="mobile-stat">
+                    <span class="mobile-stat-value mobile-session-score" id="mobileSessionScore">0/0</span>
+                    <span class="mobile-stat-label">Score</span>
+                </div>
             </div>
         </div>
         
@@ -1417,7 +1498,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.7.6';
+        const APP_VERSION = '1.7.7';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -1809,35 +1890,50 @@
         }
         
         function updateStats() {
-            document.getElementById('currentCard').textContent = currentQuestions.length > 0 ? currentIndex + 1 : 0;
-            document.getElementById('totalCards').textContent = currentQuestions.length;
-            document.getElementById('priorityCount').textContent = allQuestions.filter(q => q.priority && q.section !== 'LIMITATIONS' && q.section !== 'MEMORY ITEMS').length;
+            const current = currentQuestions.length > 0 ? currentIndex + 1 : 0;
+            const total = currentQuestions.length;
+            const priority = allQuestions.filter(q => q.priority && q.section !== 'LIMITATIONS' && q.section !== 'MEMORY ITEMS').length;
+            document.getElementById('currentCard').textContent = current;
+            document.getElementById('totalCards').textContent = total;
+            document.getElementById('priorityCount').textContent = priority;
+            // Mobile stats
+            document.getElementById('mobileCurrentCard').textContent = current;
+            document.getElementById('mobileTotalCards').textContent = total;
+            document.getElementById('mobilePriorityCount').textContent = priority;
         }
         
         function updateProgress() {
             const progress = currentQuestions.length > 0 ? ((currentIndex + 1) / currentQuestions.length) * 100 : 0;
             document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('mobileProgressFill').style.width = progress + '%';
             updateStats();
         }
         
         // Session scoring functions
         function updateSessionScore() {
             const scoreElement = document.getElementById('sessionScore');
+            const mobileScoreElement = document.getElementById('mobileSessionScore');
             const incorrectCountElement = document.getElementById('incorrectCount');
             const reviewBtn = document.getElementById('reviewIncorrectBtn');
             
             if (sessionAttempted === 0) {
                 scoreElement.textContent = '0/0';
+                mobileScoreElement.textContent = '0/0';
                 scoreElement.classList.remove('has-incorrect');
+                mobileScoreElement.classList.remove('has-incorrect');
             } else {
                 const percentage = Math.round((sessionCorrect / sessionAttempted) * 100);
-                scoreElement.textContent = `${sessionCorrect}/${sessionAttempted} (${percentage}%)`;
+                const scoreText = `${sessionCorrect}/${sessionAttempted} (${percentage}%)`;
+                scoreElement.textContent = scoreText;
+                mobileScoreElement.textContent = scoreText;
                 
                 // Change color if there are incorrect answers
                 if (incorrectQuestions.size > 0) {
                     scoreElement.classList.add('has-incorrect');
+                    mobileScoreElement.classList.add('has-incorrect');
                 } else {
                     scoreElement.classList.remove('has-incorrect');
+                    mobileScoreElement.classList.remove('has-incorrect');
                 }
             }
             
@@ -2081,6 +2177,13 @@
             <h2>📋 App Changes Log</h2>
             
             <ul>
+                <li><strong>v1.7.7</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Added mobile-only progress stats bar below flashcard (card number, total, priority, session score)</li>
+                        <li>Added mobile-only progress bar visible without opening settings</li>
+                        <li>Study progress now always visible on mobile without needing to open settings panel</li>
+                    </ul>
+                </li>
                 <li><strong>v1.7.6</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Removed 5 duplicate questions: Q303 (AIRCOND27), Q304 (AIRCOND32), Q328 (APU22), Q606 (LDGR04), Q665 (OXY12)</li>
