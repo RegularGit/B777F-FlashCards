@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#2d3a6e">
     <meta name="theme-color" content="#2d3a6e" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#667eea" media="(prefers-color-scheme: light)">
@@ -744,6 +744,7 @@
             
             body {
                 padding: 5px;
+                padding-top: env(safe-area-inset-top);
             }
             
             .container {
@@ -795,6 +796,7 @@
             
             .controls:not(.collapsed) {
                 padding: 12px;
+                padding-top: calc(12px + env(safe-area-inset-top));
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -882,6 +884,7 @@
                 right: 0;
                 margin: 0;
                 padding: 10px;
+                padding-bottom: calc(10px + env(safe-area-inset-bottom));
                 gap: 8px;
                 width: 100%;
                 max-width: 100%;
@@ -1140,7 +1143,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.7 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.7.8 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1498,7 +1501,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.7.7';
+        const APP_VERSION = '1.7.8';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -2177,6 +2180,15 @@
             <h2>📋 App Changes Log</h2>
             
             <ul>
+                <li><strong>v1.7.8</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed iPhone notch white strip - background gradient now extends behind the notch/status bar area</li>
+                        <li>Added viewport-fit=cover and black-translucent status bar for seamless notch integration</li>
+                        <li>Added safe-area-inset padding to keep content below notch while background fills it</li>
+                        <li>Fixed bottom navigation safe-area padding for devices with home indicator</li>
+                        <li>Fixed settings overlay safe-area padding for notch devices</li>
+                    </ul>
+                </li>
                 <li><strong>v1.7.7</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Added mobile-only progress stats bar below flashcard (card number, total, priority, session score)</li>
