@@ -1631,6 +1631,8 @@
                     latestVersion = latestVersion.trim();
                     if (latestVersion !== APP_VERSION) {
                         document.getElementById('updateBanner').classList.add('visible');
+                    } else {
+                        document.getElementById('updateBanner').classList.remove('visible');
                     }
                 })
                 .catch(error => {
