@@ -6,9 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="theme-color" content="#2d3a6e">
-    <meta name="theme-color" content="#2d3a6e" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#667eea" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#667eea" id="themeColorMeta">
     <meta name="apple-mobile-web-app-title" content="B777F Study">
     <title>B777F Oral Questions Flashcards</title>
     
@@ -1138,7 +1136,7 @@
     <div class="container">
         <div class="header">
             <h1>🛫 B777F Oral Questions</h1>
-            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.8.2 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
+            <p>Click card to flip • 837 Questions • 226 Priority • 82 Limitations/Memory Items • v1.8.4 <button class="refresh-btn" onclick="forceUpdate()" title="Check for Updates">🔄</button></p>
         </div>
         
         <div class="update-banner" id="updateBanner" onclick="forceUpdate()">
@@ -1387,11 +1385,7 @@
         function updateThemeColor() {
             const isDark = document.body.classList.contains('dark-mode');
             const color = isDark ? '#2d3a6e' : '#667eea';
-            // Update all theme-color meta tags
-            document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-                meta.setAttribute('content', color);
-            });
-            // Also set body background-color as Safari fallback for notch area
+            document.getElementById('themeColorMeta').setAttribute('content', color);
             document.body.style.backgroundColor = color;
         }
         
@@ -1506,7 +1500,7 @@
         }
         
         // Load dark mode preference on page load
-        const APP_VERSION = '1.8.2';
+        const APP_VERSION = '1.8.4';
         
         function checkForUpdates() {
             const versionUrl = 'version.txt?t=' + Date.now();
@@ -2185,6 +2179,18 @@
             <h2>📋 App Changes Log</h2>
             
             <ul>
+                <li><strong>v1.8.4</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Fixed notch color: replaced 3 conflicting theme-color meta tags with single JS-controlled one</li>
+                        <li>Notch color now correctly follows app dark/light mode instead of system preference</li>
+                    </ul>
+                </li>
+                <li><strong>v1.8.3</strong> (Feb 2025)
+                    <ul style="margin-top: 5px; margin-bottom: 10px;">
+                        <li>Updated browser tab favicon to match the B777F Study apple-touch-icon</li>
+                        <li>Firefox and other desktop browsers now show the correct icon</li>
+                    </ul>
+                </li>
                 <li><strong>v1.8.2</strong> (Feb 2025)
                     <ul style="margin-top: 5px; margin-bottom: 10px;">
                         <li>Moved mobile stats bar to below Settings button (no longer crowding bottom nav)</li>
